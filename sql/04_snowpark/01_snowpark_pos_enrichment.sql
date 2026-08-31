@@ -3,7 +3,7 @@
 -- Python DataFrames running natively in Snowflake — no data movement
 -- Demo segment: 0:30–0:45
 -- This is a Snowpark stored procedure — deploy via Snowsight or snow CLI
--- Run as: DEMO_TRANSFORMER
+-- Run as: DEMO_ENGINEER
 -------------------------------------------------------------------------------
 
 -- Register the Snowpark stored procedure

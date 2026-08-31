@@ -5,7 +5,7 @@ default:
       type: snowflake
       account: SFSENORTHAMERICA-DEMO_USER_AZURE
       user: DEMO_USER
-      role: DEMO_TRANSFORMER
+      role: DEMO_ENGINEER
       database: RETAIL_TRANSFORM_DEMO
       warehouse: DEMO_TRANSFORM_WH
       schema: SILVER

@@ -2,10 +2,10 @@
 -- RETAIL TRANSFORM DEMO: Dynamic Tables (Gold Layer)
 -- Declarative, incremental analytics — Snowflake manages refresh
 -- Demo segment: 0:15–0:30
--- Run as: DEMO_TRANSFORMER
+-- Run as: DEMO_ENGINEER
 -------------------------------------------------------------------------------
 
-USE ROLE DEMO_TRANSFORMER;
+USE ROLE DEMO_ENGINEER;
 USE DATABASE RETAIL_TRANSFORM_DEMO;
 USE WAREHOUSE DEMO_ANALYTICS_WH;
 

@@ -72,16 +72,13 @@ A CPG company receives daily POS sell-through data, inventory snapshots, and pro
 ```
 SYSADMIN
 └── DEMO_ADMIN (owns database)
-    └── DEMO_ENGINEER (builds pipelines, runs tasks)
-        ├── DEMO_TRANSFORMER (dbt, Snowpark, DT refresh)
-        └── DEMO_ANALYST (read-only silver/gold)
+    └── DEMO_ENGINEER (all pipelines, transformations, and queries)
 ```
 
-| Role | Schemas | Warehouse |
-|------|---------|-----------|
-| ENGINEER | RAW, BRONZE, STAGING, REF (all) | DEMO_ETL_WH |
-| TRANSFORMER | SILVER, GOLD (write); RAW, BRONZE, REF (read) | DEMO_TRANSFORM_WH, DEMO_ANALYTICS_WH |
-| ANALYST | SILVER, GOLD (select only) | DEMO_ANALYTICS_WH |
+| Role | Schemas | Warehouses |
+|------|---------|------------|
+| DEMO_ADMIN | Owns database, all schemas | All |
+| DEMO_ENGINEER | Full privileges on all 6 schemas | DEMO_ETL_WH, DEMO_TRANSFORM_WH, DEMO_ANALYTICS_WH |
 
 ---
 
@@ -126,13 +123,13 @@ Expected result: `PASS=25 WARN=0 ERROR=0 SKIP=0 TOTAL=25`
 ### 3. Create Dynamic Tables
 
 ```
-sql/02_dynamic_tables/01             (DEMO_TRANSFORMER)
+sql/02_dynamic_tables/01             (DEMO_ENGINEER)
 ```
 
 ### 4. Snowpark Procedures (optional)
 
 ```
-sql/04_snowpark/01 → 02             (DEMO_TRANSFORMER)
+sql/04_snowpark/01 → 02             (DEMO_ENGINEER)
 ```
 
 Call them with:

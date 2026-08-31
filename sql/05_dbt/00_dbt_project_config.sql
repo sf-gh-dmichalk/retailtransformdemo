@@ -24,7 +24,7 @@
 --       type: snowflake
 --       account: {{ env_var('SNOWFLAKE_ACCOUNT') }}
 --       user: DEMO_SVC
---       role: DEMO_TRANSFORMER
+--       role: DEMO_ENGINEER
 --       database: RETAIL_TRANSFORM_DEMO
 --       warehouse: DEMO_TRANSFORM_WH
 --       schema: SILVER

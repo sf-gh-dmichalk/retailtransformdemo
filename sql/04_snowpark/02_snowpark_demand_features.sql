@@ -4,7 +4,7 @@
 -- Demonstrates: Python for complex aggregations, window functions, and
 --   feature derivation that benefits from DataFrame semantics
 -- Demo segment: 0:30–0:45 (time permitting)
--- Run as: DEMO_TRANSFORMER
+-- Run as: DEMO_ENGINEER
 -------------------------------------------------------------------------------
 
 CREATE OR REPLACE PROCEDURE SILVER.SP_BUILD_DEMAND_FEATURES()
