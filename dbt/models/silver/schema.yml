@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: fct_pos_sales
+    description: "Conformed POS sell-through fact at store/product/day grain"
+    columns:
+      - name: pos_sale_sk
+        tests:
+          - unique
+          - not_null
+      - name: transaction_date
+        tests:
+          - not_null
+      - name: units_sold
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: store_key
+        tests:
+          - relationships:
+              to: source('ref', 'DIM_STORE')
+              field: STORE_KEY
+              config:
+                severity: warn
+
+  - name: fct_inventory
+    description: "Unified inventory fact — daily store/product snapshots"
+    columns:
+      - name: inventory_sk
+        tests:
+          - unique
+          - not_null
+      - name: on_hand_qty
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fct_promotions
+    description: "Promotional calendar fact — links promos to products"
+    columns:
+      - name: promo_id
+        tests:
+          - unique
+          - not_null
+      - name: start_date
+        tests:
+          - not_null
+      - name: material_number
+        tests:
+          - not_null
+          - relationships:
+              to: source('ref', 'DIM_PRODUCT')
+              field: MATERIAL_NUMBER
+              config:
+                severity: warn

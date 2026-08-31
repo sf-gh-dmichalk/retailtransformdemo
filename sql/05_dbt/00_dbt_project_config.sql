@@ -1,0 +1,30 @@
+-------------------------------------------------------------------------------
+-- RETAIL TRANSFORM DEMO: dbt Project Configuration
+-- This file represents dbt_project.yml as SQL comments + the actual SQL models
+-- In practice this would be a standalone dbt project structure
+-- Demo segment: 0:30–0:45
+-------------------------------------------------------------------------------
+
+-- dbt_project.yml equivalent:
+-- name: 'retail_transform'
+-- version: '1.0.0'
+-- profile: 'retail_transform'
+-- model-paths: ["models"]
+-- target-path: "target"
+-- clean-targets: ["target", "dbt_packages"]
+-- vars:
+--   snowflake_database: 'RETAIL_TRANSFORM_DEMO'
+--   silver_schema: 'SILVER'
+
+-- profiles.yml equivalent:
+-- retail_transform:
+--   target: dev
+--   outputs:
+--     dev:
+--       type: snowflake
+--       account: {{ env_var('SNOWFLAKE_ACCOUNT') }}
+--       user: DEMO_SVC
+--       role: DEMO_TRANSFORMER
+--       database: RETAIL_TRANSFORM_DEMO
+--       warehouse: DEMO_TRANSFORM_WH
+--       schema: SILVER

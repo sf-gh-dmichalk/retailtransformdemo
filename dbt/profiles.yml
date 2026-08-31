@@ -1,0 +1,12 @@
+default:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: SFSENORTHAMERICA-DEMO_USER_AZURE
+      user: DEMO_USER
+      role: DEMO_TRANSFORMER
+      database: RETAIL_TRANSFORM_DEMO
+      warehouse: DEMO_TRANSFORM_WH
+      schema: SILVER
+      threads: 4

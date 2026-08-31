@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="snowflake-source" content="cortex-agent-authored" />
+  <title>Retail Demo — Architecture</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: -apple-system, system-ui, 'Segoe UI', sans-serif;
+      max-width: 1200px; width: 100%; box-sizing: border-box;
+      margin: 0 auto; padding: 32px 24px;
+      color: light-dark(#1f2937, #e5e7eb);
+      background: light-dark(#ffffff, #0f172a);
+    }
+    h1 { color: light-dark(#0f172a, #f1f5f9); margin-bottom: 4px; font-size: 1.6rem; }
+    .subtitle { color: light-dark(#6b7280, #9ca3af); margin-top: 0; font-size: 0.9rem; }
+    .diagram-wrap { overflow-x: auto; margin: 32px 0; }
+    svg text { font-family: -apple-system, system-ui, 'Segoe UI', sans-serif; }
+  </style>
+</head>
+<body>
+
+  <h1>Retail Transformation — Architecture</h1>
+  <p class="subtitle">Data Engineering on Snowflake — Technology by Layer</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1100px;height:auto;">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+        </marker>
+        <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#3b82f6"/>
+        </marker>
+        <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#10b981"/>
+        </marker>
+        <marker id="arrow-purple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#8b5cf6"/>
+        </marker>
+        <marker id="arrow-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#f59e0b"/>
+        </marker>
+      </defs>
+
+      <!-- Background -->
+      <rect width="1100" height="820" rx="12" fill="#0f172a"/>
+
+      <!-- === SOURCES === -->
+      <rect x="30" y="20" width="1040" height="80" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="50" y="45" font-size="11" fill="#94a3b8" font-weight="600" letter-spacing="1">EXTERNAL SOURCES</text>
+      <rect x="50" y="55" width="120" height="32" rx="4" fill="#312e81"/>
+      <text x="110" y="76" font-size="11" fill="#c7d2fe" text-anchor="middle">SAP ERP</text>
+      <rect x="190" y="55" width="120" height="32" rx="4" fill="#312e81"/>
+      <text x="250" y="76" font-size="11" fill="#c7d2fe" text-anchor="middle">Walmart</text>
+      <rect x="330" y="55" width="120" height="32" rx="4" fill="#312e81"/>
+      <text x="390" y="76" font-size="11" fill="#c7d2fe" text-anchor="middle">Kroger</text>
+      <rect x="470" y="55" width="120" height="32" rx="4" fill="#312e81"/>
+      <text x="530" y="76" font-size="11" fill="#c7d2fe" text-anchor="middle">Target</text>
+      <rect x="610" y="55" width="150" height="32" rx="4" fill="#312e81"/>
+      <text x="685" y="76" font-size="11" fill="#c7d2fe" text-anchor="middle">Trade Marketing</text>
+
+      <!-- === RAW SCHEMA === -->
+      <rect x="30" y="120" width="520" height="100" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+      <text x="50" y="143" font-size="11" fill="#f59e0b" font-weight="700" letter-spacing="1">RAW</text>
+      <text x="88" y="143" font-size="9" fill="#94a3b8">Snowpipe / File Loads</text>
+      <rect x="50" y="155" width="110" height="26" rx="4" fill="#292524"/>
+      <text x="105" y="173" font-size="9.5" fill="#fbbf24" text-anchor="middle">SAP_SALES_ORDERS</text>
+      <rect x="170" y="155" width="100" height="26" rx="4" fill="#292524"/>
+      <text x="220" y="173" font-size="9.5" fill="#fbbf24" text-anchor="middle">RETAILER_POS</text>
+      <rect x="280" y="155" width="120" height="26" rx="4" fill="#292524"/>
+      <text x="340" y="173" font-size="9.5" fill="#fbbf24" text-anchor="middle">RETAILER_INVENTORY</text>
+      <rect x="410" y="155" width="120" height="26" rx="4" fill="#292524"/>
+      <text x="470" y="173" font-size="9.5" fill="#fbbf24" text-anchor="middle">PROMO_CALENDAR</text>
+      <!-- Streams -->
+      <path d="M80,190 L80,200 Q80,205 85,205 L145,205 Q150,205 150,200 L150,190" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="115" y="215" font-size="8" fill="#fbbf24" text-anchor="middle">Stream</text>
+      <path d="M200,190 L200,200 Q200,205 205,205 L255,205 Q260,205 260,200 L260,190" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="230" y="215" font-size="8" fill="#fbbf24" text-anchor="middle">Stream</text>
+      <path d="M310,190 L310,200 Q310,205 315,205 L385,205 Q390,205 390,200 L390,190" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="350" y="215" font-size="8" fill="#fbbf24" text-anchor="middle">Stream</text>
+
+      <!-- === REF SCHEMA === -->
+      <rect x="580" y="120" width="490" height="100" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+      <text x="600" y="143" font-size="11" fill="#94a3b8" font-weight="700" letter-spacing="1">REF</text>
+      <text x="630" y="143" font-size="9" fill="#94a3b8">Master Data</text>
+      <rect x="600" y="155" width="110" height="26" rx="4" fill="#1c1917"/>
+      <text x="655" y="173" font-size="9.5" fill="#d6d3d1" text-anchor="middle">DIM_PRODUCT</text>
+      <rect x="720" y="155" width="100" height="26" rx="4" fill="#1c1917"/>
+      <text x="770" y="173" font-size="9.5" fill="#d6d3d1" text-anchor="middle">DIM_STORE</text>
+      <rect x="830" y="155" width="110" height="26" rx="4" fill="#1c1917"/>
+      <text x="885" y="173" font-size="9.5" fill="#d6d3d1" text-anchor="middle">DIM_FX_RATES</text>
+      <!-- REF dotted lines to other layers -->
+      <line x1="770" y1="220" x2="770" y2="780" stroke="#475569" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <text x="780" y="235" font-size="7.5" fill="#64748b">joins all layers ↓</text>
+
+      <!-- === BRONZE / STAGING === -->
+      <rect x="30" y="250" width="520" height="130" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+      <text x="50" y="273" font-size="11" fill="#f97316" font-weight="700" letter-spacing="1">BRONZE + STAGING</text>
+      <text x="210" y="273" font-size="9" fill="#94a3b8">Streams + Tasks + SQL Stored Procedures</text>
+      <!-- Task/SP outputs -->
+      <rect x="50" y="285" width="140" height="30" rx="4" fill="#431407"/>
+      <text x="120" y="305" font-size="9.5" fill="#fdba74" text-anchor="middle">SAP_ORDERS_STAGED</text>
+      <rect x="200" y="285" width="110" height="30" rx="4" fill="#431407"/>
+      <text x="255" y="305" font-size="9.5" fill="#fdba74" text-anchor="middle">POS_CLEANSED</text>
+      <rect x="320" y="285" width="130" height="30" rx="4" fill="#431407"/>
+      <text x="385" y="305" font-size="9.5" fill="#fdba74" text-anchor="middle">INVENTORY_CLEANSED</text>
+      <!-- dbt views -->
+      <rect x="50" y="330" width="130" height="26" rx="12" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+      <text x="115" y="348" font-size="9" fill="#93c5fd" text-anchor="middle">stg_retailer_pos</text>
+      <rect x="190" y="330" width="150" height="26" rx="12" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+      <text x="265" y="348" font-size="9" fill="#93c5fd" text-anchor="middle">stg_retailer_inventory</text>
+      <rect x="350" y="330" width="140" height="26" rx="12" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+      <text x="420" y="348" font-size="9" fill="#93c5fd" text-anchor="middle">stg_promo_calendar</text>
+      <text x="505" y="362" font-size="8" fill="#3b82f6" font-style="italic">dbt views</text>
+
+      <!-- Technology badges for Bronze -->
+      <rect x="460" y="260" width="80" height="20" rx="10" fill="#7c2d12"/>
+      <text x="500" y="274" font-size="8" fill="#fed7aa" text-anchor="middle" font-weight="600">Tasks + SPs</text>
+
+      <!-- === SILVER === -->
+      <rect x="30" y="410" width="710" height="130" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+      <text x="50" y="433" font-size="11" fill="#3b82f6" font-weight="700" letter-spacing="1">SILVER</text>
+      <text x="102" y="433" font-size="9" fill="#94a3b8">dbt (incremental + tested) + Snowpark Python</text>
+      <!-- dbt models -->
+      <rect x="50" y="448" width="120" height="34" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+      <text x="110" y="465" font-size="9.5" fill="#93c5fd" text-anchor="middle" font-weight="600">FCT_POS_SALES</text>
+      <text x="110" y="477" font-size="7.5" fill="#60a3fa" text-anchor="middle">incremental</text>
+      <rect x="180" y="448" width="120" height="34" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+      <text x="240" y="465" font-size="9.5" fill="#93c5fd" text-anchor="middle" font-weight="600">FCT_INVENTORY</text>
+      <text x="240" y="477" font-size="7.5" fill="#60a3fa" text-anchor="middle">incremental</text>
+      <rect x="310" y="448" width="130" height="34" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+      <text x="375" y="465" font-size="9.5" fill="#93c5fd" text-anchor="middle" font-weight="600">FCT_PROMOTIONS</text>
+      <text x="375" y="477" font-size="7.5" fill="#60a3fa" text-anchor="middle">full refresh</text>
+      <rect x="450" y="448" width="130" height="34" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+      <text x="515" y="465" font-size="9.5" fill="#93c5fd" text-anchor="middle" font-weight="600">DIM_PRODUCT_SCD2</text>
+      <text x="515" y="477" font-size="7.5" fill="#60a3fa" text-anchor="middle">SCD Type 2</text>
+      <!-- Snowpark -->
+      <rect x="50" y="498" width="140" height="30" rx="4" fill="#14532d" stroke="#10b981" stroke-width="1"/>
+      <text x="120" y="518" font-size="9.5" fill="#6ee7b7" text-anchor="middle" font-weight="600">DEMAND_FEATURES</text>
+      <rect x="200" y="502" width="70" height="20" rx="10" fill="#065f46"/>
+      <text x="235" y="516" font-size="8" fill="#a7f3d0" text-anchor="middle">Snowpark</text>
+      <!-- dbt tests badge -->
+      <rect x="600" y="448" width="120" height="34" rx="4" fill="#172554" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="660" y="465" font-size="9" fill="#93c5fd" text-anchor="middle">18 dbt tests</text>
+      <text x="660" y="478" font-size="7.5" fill="#60a3fa" text-anchor="middle">unique, not_null, refs</text>
+
+      <!-- === GOLD === -->
+      <rect x="30" y="570" width="1040" height="130" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+      <text x="50" y="593" font-size="11" fill="#8b5cf6" font-weight="700" letter-spacing="1">GOLD</text>
+      <text x="90" y="593" font-size="9" fill="#94a3b8">Dynamic Tables — declarative, auto-refresh, zero orchestration</text>
+      <!-- DTs -->
+      <rect x="50" y="608" width="220" height="74" rx="8" fill="#2e1065" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="160" y="630" font-size="10" fill="#c4b5fd" text-anchor="middle" font-weight="600">CONFORMED_SALES_ENTITY</text>
+      <text x="160" y="648" font-size="9" fill="#a78bfa" text-anchor="middle">SAP orders + product + FX</text>
+      <text x="160" y="668" font-size="9" fill="#7c3aed" text-anchor="middle" font-weight="700">TARGET_LAG: 30 min</text>
+
+      <rect x="290" y="608" width="200" height="74" rx="8" fill="#2e1065" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="390" y="630" font-size="10" fill="#c4b5fd" text-anchor="middle" font-weight="600">WEEKLY_STORE_DEMAND</text>
+      <text x="390" y="648" font-size="9" fill="#a78bfa" text-anchor="middle">Demand planning aggregation</text>
+      <text x="390" y="668" font-size="9" fill="#7c3aed" text-anchor="middle" font-weight="700">TARGET_LAG: 1 hour</text>
+
+      <rect x="510" y="608" width="200" height="74" rx="8" fill="#2e1065" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="610" y="630" font-size="10" fill="#c4b5fd" text-anchor="middle" font-weight="600">PROMO_LIFT_ANALYSIS</text>
+      <text x="610" y="648" font-size="9" fill="#a78bfa" text-anchor="middle">Trade promo ROI</text>
+      <text x="610" y="668" font-size="9" fill="#7c3aed" text-anchor="middle" font-weight="700">TARGET_LAG: 2 hours</text>
+
+      <rect x="730" y="608" width="220" height="74" rx="8" fill="#2e1065" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="840" y="630" font-size="10" fill="#c4b5fd" text-anchor="middle" font-weight="600">ON_SHELF_AVAILABILITY</text>
+      <text x="840" y="648" font-size="9" fill="#a78bfa" text-anchor="middle">OOS / days-of-supply scorecard</text>
+      <text x="840" y="668" font-size="9" fill="#7c3aed" text-anchor="middle" font-weight="700">TARGET_LAG: 30 min</text>
+
+      <!-- === ANALYTICS === -->
+      <rect x="30" y="720" width="1040" height="80" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="50" y="745" font-size="11" fill="#94a3b8" font-weight="600" letter-spacing="1">ANALYTICS & AI</text>
+      <rect x="50" y="755" width="140" height="28" rx="4" fill="#0c4a6e"/>
+      <text x="120" y="774" font-size="9.5" fill="#7dd3fc" text-anchor="middle">Demand Planning</text>
+      <rect x="210" y="755" width="170" height="28" rx="4" fill="#0c4a6e"/>
+      <text x="295" y="774" font-size="9.5" fill="#7dd3fc" text-anchor="middle">Trade Promo Effectiveness</text>
+      <rect x="400" y="755" width="160" height="28" rx="4" fill="#0c4a6e"/>
+      <text x="480" y="774" font-size="9.5" fill="#7dd3fc" text-anchor="middle">On-Shelf Availability</text>
+      <rect x="580" y="755" width="140" height="28" rx="4" fill="#0c4a6e"/>
+      <text x="650" y="774" font-size="9.5" fill="#7dd3fc" text-anchor="middle">Cortex Analyst (S3)</text>
+      <rect x="740" y="755" width="140" height="28" rx="4" fill="#0c4a6e"/>
+      <text x="810" y="774" font-size="9.5" fill="#7dd3fc" text-anchor="middle">ML Forecasting</text>
+
+      <!-- === FLOW ARROWS === -->
+      <!-- Sources to RAW -->
+      <line x1="110" y1="87" x2="110" y2="152" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="250" y1="87" x2="220" y2="152" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="390" y1="87" x2="340" y2="152" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="530" y1="87" x2="340" y2="152" stroke="#64748b" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="685" y1="87" x2="470" y2="152" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- RAW to BRONZE (Tasks + SPs) -->
+      <line x1="120" y1="220" x2="120" y2="282" stroke="#f97316" stroke-width="1.5" marker-end="url(#arrow-amber)"/>
+      <line x1="230" y1="220" x2="255" y2="282" stroke="#f97316" stroke-width="1.5" marker-end="url(#arrow-amber)"/>
+      <line x1="350" y1="220" x2="385" y2="282" stroke="#f97316" stroke-width="1.5" marker-end="url(#arrow-amber)"/>
+
+      <!-- RAW to dbt views -->
+      <line x1="220" y1="220" x2="115" y2="327" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrow-blue)"/>
+      <line x1="340" y1="220" x2="265" y2="327" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrow-blue)"/>
+      <line x1="470" y1="220" x2="420" y2="327" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrow-blue)"/>
+
+      <!-- BRONZE dbt views to SILVER -->
+      <line x1="115" y1="356" x2="110" y2="445" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+      <line x1="265" y1="356" x2="240" y2="445" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+      <line x1="420" y1="356" x2="375" y2="445" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+
+      <!-- SILVER FCT_POS_SALES to Snowpark -->
+      <line x1="110" y1="482" x2="120" y2="495" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+      <!-- SILVER/STAGING to GOLD -->
+      <line x1="120" y1="540" x2="160" y2="605" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+      <line x1="110" y1="540" x2="390" y2="605" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+      <line x1="240" y1="540" x2="840" y2="605" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+      <line x1="375" y1="540" x2="610" y2="605" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+
+      <!-- GOLD to Analytics -->
+      <line x1="390" y1="682" x2="295" y2="752" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+      <line x1="610" y1="682" x2="480" y2="752" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+      <line x1="840" y1="682" x2="650" y2="752" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+
+      <!-- === TECHNOLOGY LEGEND === -->
+      <rect x="780" y="410" width="280" height="130" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="800" y="432" font-size="10" fill="#f1f5f9" font-weight="700">Technology Legend</text>
+      <line x1="800" y1="442" x2="820" y2="442" stroke="#f97316" stroke-width="2.5"/>
+      <text x="828" y="446" font-size="9" fill="#fdba74">Streams + Tasks + Stored Procedures</text>
+      <line x1="800" y1="462" x2="820" y2="462" stroke="#3b82f6" stroke-width="2.5"/>
+      <text x="828" y="466" font-size="9" fill="#93c5fd">dbt (incremental models + tests)</text>
+      <line x1="800" y1="482" x2="820" y2="482" stroke="#10b981" stroke-width="2.5"/>
+      <text x="828" y="486" font-size="9" fill="#6ee7b7">Snowpark Python (ML features)</text>
+      <line x1="800" y1="502" x2="820" y2="502" stroke="#8b5cf6" stroke-width="2.5"/>
+      <text x="828" y="506" font-size="9" fill="#c4b5fd">Dynamic Tables (auto-refresh)</text>
+      <line x1="800" y1="522" x2="820" y2="522" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="828" y="526" font-size="9" fill="#94a3b8">Reference lookups / joins</text>
+    </svg>
+  </div>
+
+</body>
+</html>

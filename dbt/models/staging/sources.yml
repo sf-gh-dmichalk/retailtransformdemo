@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: raw
+    database: RETAIL_TRANSFORM_DEMO
+    schema: RAW
+    tables:
+      - name: RETAILER_POS
+      - name: RETAILER_INVENTORY
+      - name: PROMO_CALENDAR
+      - name: SAP_SALES_ORDERS
+
+  - name: ref
+    database: RETAIL_TRANSFORM_DEMO
+    schema: REF
+    tables:
+      - name: DIM_PRODUCT
+      - name: DIM_STORE
+      - name: DIM_FX_RATES
