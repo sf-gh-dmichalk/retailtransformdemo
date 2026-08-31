@@ -6,15 +6,7 @@ A complete Snowflake data engineering demo showing four transformation approache
 
 ## What This Demonstrates
 
-### Dynamic Tables (Gold Layer)
-Declarative, auto-refreshing analytical datasets. Define the SQL, set a `TARGET_LAG` SLA, and Snowflake handles incremental refresh — no orchestration code.
-
-- **Conformed Sales Entity** — SAP orders joined to product master and FX rates (30 min lag)
-- **Weekly Store Demand** — store/brand/week aggregation for demand planning (1 hour lag)
-- **Promo Lift Analysis** — promotional vs baseline sales comparison with ROI (2 hour lag)
-- **On-Shelf Availability** — out-of-stock detection and days-of-supply scorecard (30 min lag)
-
-### Streams + Tasks + Stored Procedures (Bronze Layer)
+### Streams + Tasks + Stored Procedures (Raw → Bronze)
 Event-driven CDC pipelines that fire automatically when new data lands.
 
 - **Streams** on each raw table detect inserts without polling
@@ -22,13 +14,7 @@ Event-driven CDC pipelines that fire automatically when new data lands.
 - **SQL Stored Procedures** encapsulate multi-step logic: type-casting, retailer-specific date normalization, UPC validation, error quarantine
 - **Task DAG** with a child quality-audit task that runs after POS processing
 
-### Snowpark Python (Silver Layer)
-Python DataFrames running natively inside Snowflake — no data movement.
-
-- **POS Enrichment** — UPC validation, retailer-specific date parsing, product master join, derived metrics (kg sold, revenue per kg)
-- **Demand Feature Engineering** — rolling 7d/28d averages, week-over-week growth, day-of-week seasonality, promo running count for ML forecasting
-
-### dbt (Silver Layer)
+### dbt (Bronze → Silver)
 Model-based SQL transformation with version control, testing, and lineage.
 
 - **Incremental models** — `fct_pos_sales` and `fct_inventory` with merge strategy
@@ -36,6 +22,20 @@ Model-based SQL transformation with version control, testing, and lineage.
 - **SCD Type 2** — `dim_product_scd2` tracking product attribute changes
 - **18 automated tests** — unique, not_null, accepted_range, referential integrity
 - **Deployed as a Snowflake-native dbt project** via `snow dbt deploy`
+
+### Snowpark Python (Silver)
+Python DataFrames running natively inside Snowflake — no data movement.
+
+- **POS Enrichment** — UPC validation, retailer-specific date parsing, product master join, derived metrics (kg sold, revenue per kg)
+- **Demand Feature Engineering** — rolling 7d/28d averages, week-over-week growth, day-of-week seasonality, promo running count for ML forecasting
+
+### Dynamic Tables (Silver → Gold)
+Declarative, auto-refreshing analytical datasets. Define the SQL, set a `TARGET_LAG` SLA, and Snowflake handles incremental refresh — no orchestration code.
+
+- **Conformed Sales Entity** — SAP orders joined to product master and FX rates (30 min lag)
+- **Weekly Store Demand** — store/brand/week aggregation for demand planning (1 hour lag)
+- **Promo Lift Analysis** — promotional vs baseline sales comparison with ROI (2 hour lag)
+- **On-Shelf Availability** — out-of-stock detection and days-of-supply scorecard (30 min lag)
 
 ---
 
